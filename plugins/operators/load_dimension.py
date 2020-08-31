@@ -24,6 +24,11 @@ class LoadDimensionOperator(BaseOperator):
         self.table = table
 
     def execute(self, context):
+        """
+        connecting to redshift with the PostgresHook and the redshift_conn_id
+        deleting former data in the tables
+        inserting the data into the dimension tables with sql_queries.py
+        """
         redshift_hook = PostgresHook(postgres_conn_id = self.redshift_conn_id)
         redshift_hook.run("DELETE FROM {}".format(self.table))
         formatted_sql = LoadDimensionOperator.insert_sql.format(

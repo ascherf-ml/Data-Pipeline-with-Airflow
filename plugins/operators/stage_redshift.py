@@ -37,13 +37,19 @@ class StageToRedshiftOperator(BaseOperator):
         self.ignore_headers = ignore_headers
 
     def execute(self, context):
+        """
+        connecting to S3 with the AwsHook and the aws_credentials
+        connecting to redshift with the PostgresHook and the redshift_conn_id
+        deleting former data in the tables
+        inserting the data into the staging tables with sql_queries.py
+        """
         aws_hook = AwsHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
-        redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
+        redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         self.log.info("Connected to Redshift")
 
-        #self.log.info("Clearing data from destination Redshift table")
-        #redshift.run("DELETE FROM {}".format(self.table))
+        self.log.info("Clearing data from destination Redshift table")
+        redshift_hook.run("DELETE FROM {}".format(self.table))
 
         self.log.info("Copying data from S3 to Redshift")
         rendered_key = self.s3_key.format(**context)
@@ -55,4 +61,4 @@ class StageToRedshiftOperator(BaseOperator):
             credentials.secret_key,
             self.json
         )
-        redshift.run(formatted_sql)
+        redshift_hook.run(formatted_sql)

@@ -12,7 +12,7 @@ The source data resides in S3 and needs to be processed in Sparkify's data wareh
 ## Project Structure
 This project contains the following files:
 
-```
+```sh
 README.md
 dags:
 - pipe_stage3.py
@@ -32,9 +32,37 @@ plugins:
 ```
 
 ## Main ETL
-`pipe_stage3.py`
 
 ![Dag example](https://github.com/ascherf-ml/Data-Pipeline-with-Airflow/blob/master/example-dag.png)
+"Example Dag Picture from udacity.com"
+
+`pipe_stage3.py`
+
+Consists of 7 stages with multiple dags:
+
+- Stage 1: Begin Execution
+
+- Stage 2: Creating empty tables in redshift with `CreateTableOperator`
+
+- Stage 3: Loading data from S3 with `StageToRedshiftOperator`
+  - loading **events** from event data (JSON-files) stored on S3 and storing the data in a table on AWS-redshift
+  - loading **songs** from song data (JSON-files) stored on S3 and storing the data in a table on AWS-redshift
+
+- Stage 4: Creating `songplays` fact table based on song and event data with `LoadFactOperator`
+
+- Stage 5: Creating dimensional tables additional to `songplays` with `LoadDimensionOperator`
+  - `users`: user information
+  - `songs`: song information
+  - `artists`: artist information
+  - `time`: datetime of songplays
+
+
+- Stage 6: Data quality check
+  - checking if the data was successfully handled with `DataQualityOperator`
+
+
+- Stage 7: Stop Execution
+
 
 
 
@@ -42,6 +70,4 @@ plugins:
 
 1. Create Amazon Redshift database.
 
-2. Run `create_tables.sql` to create the tables.
-
-3. Run `etl_task.py` to process the entire datasets.
+2. Run `pipe_stage3.py` to process the entire datasets.

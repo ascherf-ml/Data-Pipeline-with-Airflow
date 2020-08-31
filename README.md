@@ -42,15 +42,15 @@ Consists of 7 stages with multiple dags:
 
 - Stage 1: Begin Execution
 
-- Stage 2: Creating empty tables in redshift with `CreateTableOperator`
+- Stage 2: Creating empty tables in redshift with `CreateTableOperator` (loading create_tables.sql)
 
 - Stage 3: Loading data from S3 with `StageToRedshiftOperator`
   - loading **events** from event data (JSON-files) stored on S3 and storing the data in a table on AWS-redshift
   - loading **songs** from song data (JSON-files) stored on S3 and storing the data in a table on AWS-redshift
 
-- Stage 4: Creating `songplays` fact table based on song and event data with `LoadFactOperator`
+- Stage 4: Creating `songplays` fact table based on song and event data with `LoadFactOperator` (loading sql_queries.py)
 
-- Stage 5: Creating dimensional tables additional to `songplays` with `LoadDimensionOperator`
+- Stage 5: Creating dimensional tables additional to `songplays` with `LoadDimensionOperator` (loading sql_queries.py)
   - `users`: user information
   - `songs`: song information
   - `artists`: artist information
@@ -63,6 +63,27 @@ Consists of 7 stages with multiple dags:
 
 - Stage 7: Stop Execution
 
+## Operators
+- create_tables.py
+  - connecting to redshift
+  - creating tables in redshift to populate with data from S3
+
+- stage_redshift.py
+  - connecting to S3 bucket
+  - connecting to redshift
+  - loading data from S3 to redshift and storing the data in the tables created by `CreateTableOperator`
+
+- load_fact.py
+  - connecting to redshift
+  - setting up the `songplays` fact table from data from redshift `staging tables`
+
+- load_dimension.py
+  - connecting to redshift
+  - setting up the dimension tables from data from redshift `staging tables`
+
+- data_quality.py
+  - connecting to redshift
+  - testing if the data was correctly set up in the dimension tables (here the `time` table)
 
 
 

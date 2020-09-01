@@ -31,22 +31,25 @@ dag = DAG('pipe_stage3',
 
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
 
-create_tables_in_redshift = CreateTableOperator(
 """
 connecting to redshift
 running the CreateTableOperator operator with create_tables.sql
 """
+create_tables_in_redshift = CreateTableOperator(
+
     task_id = 'create_tables_in_redshift',
     redshift_conn_id = 'redshift',
     dag = dag
 )
 
-stage_events_to_redshift = StageToRedshiftOperator(
+
 """
 connecting to S3
 connecting to redshift
 running the StageToRedshiftOperator operator
 """
+stage_events_to_redshift = StageToRedshiftOperator(
+
     task_id="stage_events_to_redshift",
     dag=dag,
     table="staging_events",
@@ -57,12 +60,13 @@ running the StageToRedshiftOperator operator
     json="s3://udacity-dend/log_json_path.json"
 )
 
-stage_songs_to_redshift = StageToRedshiftOperator(
 """
 connecting to S3
 connecting to redshift
 running the StageToRedshiftOperator operator
 """
+stage_songs_to_redshift = StageToRedshiftOperator(
+
     task_id="stage_songs_to_redshift",
     dag=dag,
     table="staging_songs",
@@ -73,11 +77,12 @@ running the StageToRedshiftOperator operator
     json="auto"
 )
 
-load_songplays_table = LoadFactOperator(
 """
 connecting to redshift
 running the LoadFactOperator operator with sql_queries.py
 """
+load_songplays_table = LoadFactOperator(
+
     task_id='Load_songplays_fact_table',
     redshift_conn_id = 'redshift',
     table="songplays",
@@ -85,11 +90,12 @@ running the LoadFactOperator operator with sql_queries.py
     dag=dag
 )
 
-load_user_dimension_table = LoadDimensionOperator(
 """
 connecting to redshift
 running the LoadDimensionOperator operator with sql_queries.py
 """
+load_user_dimension_table = LoadDimensionOperator(
+
     task_id='Load_user_dim_table',
     redshift_conn_id = 'redshift',
     table="users",
@@ -97,11 +103,12 @@ running the LoadDimensionOperator operator with sql_queries.py
     dag=dag
 )
 
-load_song_dimension_table = LoadDimensionOperator(
 """
 connecting to redshift
 running the LoadDimensionOperator operator with sql_queries.py
 """
+load_song_dimension_table = LoadDimensionOperator(
+
     task_id='Load_song_dim_table',
     redshift_conn_id = 'redshift',
     table="songs",
@@ -109,11 +116,12 @@ running the LoadDimensionOperator operator with sql_queries.py
     dag=dag
 )
 
-load_artist_dimension_table = LoadDimensionOperator(
 """
 connecting to redshift
 running the LoadDimensionOperator operator with sql_queries.py
 """
+load_artist_dimension_table = LoadDimensionOperator(
+
     task_id='Load_artist_dim_table',
     redshift_conn_id = 'redshift',
     table="artists",
@@ -121,11 +129,12 @@ running the LoadDimensionOperator operator with sql_queries.py
     dag=dag
 )
 
-load_time_dimension_table = LoadDimensionOperator(
 """
 connecting to redshift
 running the LoadDimensionOperator operator with sql_queries.py
 """
+load_time_dimension_table = LoadDimensionOperator(
+
     task_id='Load_time_dim_table',
     redshift_conn_id = 'redshift',
     table="time",
@@ -133,11 +142,12 @@ running the LoadDimensionOperator operator with sql_queries.py
     dag=dag
 )
 
-run_quality_checks = DataQualityOperator(
 """
 connecting to redshift
 running the DataQualityOperator operator
 """
+run_quality_checks = DataQualityOperator(
+
     task_id='run_data_quality_checks',
     redshift_conn_id="redshift",
     table="time",

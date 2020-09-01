@@ -87,7 +87,8 @@ load_songplays_table = LoadFactOperator(
     redshift_conn_id = 'redshift',
     table="songplays",
     sql_query = SqlQueries.songplay_table_insert,
-    dag=dag
+    dag=dag,
+    append_only=False
 )
 
 """
@@ -100,7 +101,8 @@ load_user_dimension_table = LoadDimensionOperator(
     redshift_conn_id = 'redshift',
     table="users",
     sql_query = SqlQueries.user_table_insert,
-    dag=dag
+    dag=dag,
+    append_only=False
 )
 
 """
@@ -113,7 +115,8 @@ load_song_dimension_table = LoadDimensionOperator(
     redshift_conn_id = 'redshift',
     table="songs",
     sql_query = SqlQueries.song_table_insert,
-    dag=dag
+    dag=dag,
+    append_only=False
 )
 
 """
@@ -126,7 +129,8 @@ load_artist_dimension_table = LoadDimensionOperator(
     redshift_conn_id = 'redshift',
     table="artists",
     sql_query = SqlQueries.artist_table_insert,
-    dag=dag
+    dag=dag,
+    append_only=False
 )
 
 """
@@ -139,7 +143,8 @@ load_time_dimension_table = LoadDimensionOperator(
     redshift_conn_id = 'redshift',
     table="time",
     sql_query = SqlQueries.time_table_insert,
-    dag=dag
+    dag=dag,
+    append_only=False
 )
 
 """
@@ -150,8 +155,8 @@ run_quality_checks = DataQualityOperator(
 
     task_id='run_data_quality_checks',
     redshift_conn_id="redshift",
-    table="time",
-    dag=dag
+    dag=dag,
+    tables=["songplay", "users", "song", "artist", "time"]
 )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
